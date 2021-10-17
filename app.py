@@ -3,8 +3,10 @@ import dash
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
+from dash.long_callback import DiskcacheLongCallbackManager
 import plotly.express as px
 import pandas as pd
+import diskcache
 
 
 def get_data(startblock, endblock):
@@ -27,7 +29,10 @@ def get_data(startblock, endblock):
 
 eth = Etherscan("XURIZCRG4V3ZUKAK8FIVBT8SHC65F8CPYN")
 
-app = dash.Dash(__name__)
+cache = diskcache.Cache("./cache")
+long_callback_manager = DiskcacheLongCallbackManager(cache)
+
+app = dash.Dash(__name__, long_callback_manager=long_callback_manager)
 
 app.layout = html.Div([
     html.H1('Unique Address by Block'),
@@ -36,19 +41,21 @@ app.layout = html.Div([
     "EndBlock: ",
     dcc.Input(id='endblock', type='number'),
     html.Button('Run', id='run', n_clicks=0),
+    # html.Progress(id="progress_bar"),
     dcc.Graph(id='fig'),
 ], )
 
 
-@app.callback(
+@app.long_callback(
     Output('fig', 'figure'),
     State('startblock', 'value'),
     State('endblock', 'value'),
     Input('run', 'n_clicks'),
-    prevent_initial_call = True
+    running=[(Output("run", "disabled"), True, False)],
+    prevent_initial_call=True,
 )
 def update_graph(startblock, endblock, n_clicks):
-    data = get_data(startblock, endblock+1)
+    data = get_data(startblock, endblock + 1)
     fig = px.line(data, x="Block_Num", y="Uniq_Address_Count")
     return fig
 
