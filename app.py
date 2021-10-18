@@ -33,6 +33,7 @@ def get_data(startblock, endblock):
 
 
 API_KEY = os.environ['API_KEY']
+print(f'Using Api key {API_KEY}')
 eth = Etherscan(API_KEY)
 
 cache = diskcache.Cache("./cache")
