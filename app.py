@@ -44,7 +44,6 @@ app.layout = html.Div([
     "EndBlock: ",
     dcc.Input(id='endblock', type='number'),
     html.Button('Run', id='run', n_clicks=0),
-    # html.Progress(id="progress_bar"),
     dcc.Graph(id='fig'),
 ], )
 
