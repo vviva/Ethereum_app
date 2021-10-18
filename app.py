@@ -14,6 +14,9 @@ def get_data(startblock, endblock):
     if startblock is not None and endblock is not None:
         for block_num in range(startblock, endblock):
             block = eth.get_proxy_block_by_number(hex(block_num))
+            if block is None:
+                print(f'Block {block_num} not found')
+                break
             txs = block['transactions']
             uniq_address = []
             for tx in txs:
