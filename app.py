@@ -1,3 +1,5 @@
+import os
+
 from etherscan import Etherscan
 import dash
 from dash import dcc
@@ -30,7 +32,8 @@ def get_data(startblock, endblock):
     return df
 
 
-eth = Etherscan("XURIZCRG4V3ZUKAK8FIVBT8SHC65F8CPYN")
+API_KEY = os.environ['API_KEY']
+eth = Etherscan(API_KEY)
 
 cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheLongCallbackManager(cache)
